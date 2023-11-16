@@ -1,42 +1,31 @@
-import { useState } from "react";
+// Import tipe data PlayerSymbol dari file App
+import { PlayerSymbol } from "../App";
 
-type Props = { onSelectSquare: () => void; activePlayerSymbol: PlayerSymbol };
-export type PlayerSymbol = "X" | "O" | null;
+// Definisikan tipe data props untuk komponen GameBoard
+type GameBoardProps = {
+  onSelectSquare: (rowIndex: number, colIndex: number) => void; // Fungsi yang akan dipanggil ketika suatu kotak dipilih
+  board: PlayerSymbol[][]; // Papan permainan yang akan ditampilkan
+};
 
-const initialGameBoard: PlayerSymbol[][] = [
-  [null, null, null],
-  [null, null, null],
-  [null, null, null],
-];
-
-export default function GameBoard({
-  onSelectSquare,
-  activePlayerSymbol,
-}: Props) {
-  const [gameBoard, setGameBoard] = useState(initialGameBoard);
-
-  function handleSelectSquare(rowIndex: number, colIndex: number) {
-    setGameBoard((prevGameBoard) => {
-      const updatedBoard: PlayerSymbol[][] = [
-        ...prevGameBoard.map((innerArray) => [...innerArray]),
-      ];
-
-      updatedBoard[rowIndex][colIndex] = activePlayerSymbol;
-      return updatedBoard;
-    });
-
-    onSelectSquare();
-  }
-
+// Komponen GameBoard
+export default function GameBoard({ onSelectSquare, board }: GameBoardProps) {
+  // Render papan permainan dalam bentuk elemen <ol>
   return (
     <ol id="game-board">
-      {gameBoard.map((row, rowIndex) => (
+      {/* Map setiap baris pada papan permainan */}
+      {board.map((row, rowIndex) => (
         <li key={rowIndex}>
+          {/* Render setiap kotak pada baris dalam bentuk elemen <ol> */}
           <ol>
+            {/* Map setiap simbol pemain pada suatu kotak */}
             {row.map((playerSymbol, colIndex) => (
               <li key={colIndex}>
-                <button onClick={() => handleSelectSquare(rowIndex, colIndex)}>
-                  {playerSymbol}
+                {/* Tombol yang merepresentasikan suatu kotak pada papan permainan */}
+                <button
+                  onClick={() => onSelectSquare(rowIndex, colIndex)} // Panggil fungsi onSelectSquare saat tombol ditekan
+                  disabled={playerSymbol !== null} // Nonaktifkan tombol jika kotak sudah terisi
+                >
+                  {playerSymbol} {/* Tampilkan simbol pemain pada kotak */}
                 </button>
               </li>
             ))}
